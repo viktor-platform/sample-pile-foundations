@@ -165,6 +165,7 @@ def create_scia_model(params, soils_and_colors: dict) -> SciaModel:
 
 def create_visualization_geometries(params, scia_model: SciaModel, soils_and_colors: dict) -> list:
     """Creates geometries to be visualized in the editor"""
+    global condition
     surface_level = soils_and_colors["surface_level"]
     geometries = []
     for node in scia_model.nodes:
@@ -181,27 +182,42 @@ def create_visualization_geometries(params, scia_model: SciaModel, soils_and_col
     slab_obj.material = Material('slab', threejs_roughness=1, threejs_opacity=0.3)
     geometries.append(slab_obj)
 
+    pile_depth = surface_level - params.step_3.geometry.piles.length
+
+    index=0
+    for top_level in soils_and_colors["top_levels"]:
+        if top_level < pile_depth:
+            break
+        index = index+1
+    pile_width = params.step_3.geometry.piles.width * 1e-03
     # soil top levels and colors
-    for i in range(1, len(soils_and_colors["colors"])):
-        top_level = soils_and_colors["top_levels"][i]
-        bottom_level = soils_and_colors["top_levels"][i + 1]
-        if bottom_level < surface_level-params.step_3.geometry.piles.length:
-            bottom_level = surface_level-params.step_3.geometry.piles.length
+    for i in range(1, index-1):
+        top_level = soils_and_colors["top_levels"][i+1]
+        bottom_level = soils_and_colors["top_levels"][i]
         color = soils_and_colors["colors"][i-1]
         r = color[0]
         g = color[1]
         b = color[2]
-
-        # pile beams
-        pile_width = params.step_3.geometry.piles.width * 1e-03
         for beam in scia_model.beams:
             point_top = Point(beam.begin_node.x, beam.begin_node.y, top_level)
             point_bottom = Point(beam.end_node.x, beam.end_node.y, bottom_level)
             beam_obj = RectangularExtrusion(pile_width, pile_width, Line(point_top, point_bottom))
-            beam_obj.material = Material('beam', threejs_roughness=1, threejs_opacity=0.75, color=Color(r, g, b))
+            beam_obj.material = Material('beam', threejs_roughness=1, threejs_opacity=1.0, color=Color(r, g, b))
             geometries.append(beam_obj)
-        if bottom_level == surface_level-params.step_3.geometry.piles.length:
-            break  # Forces loop to break when depth exceeds the bottom level of the pile.
+    top_level = soils_and_colors["top_levels"][index-1]
+    bottom_level = pile_depth
+    color = soils_and_colors["colors"][index]
+    r = color[0]
+    g = color[1]
+    b = color[2]
+
+    for beam in scia_model.beams:
+        point_top = Point(beam.begin_node.x, beam.begin_node.y, top_level)
+        point_bottom = Point(beam.end_node.x, beam.end_node.y, bottom_level)
+        beam_obj = RectangularExtrusion(pile_width, pile_width, Line(point_top, point_bottom))
+        beam_obj.material = Material('beam', threejs_roughness=1, threejs_opacity=1.0, color=Color(r, g, b))
+        geometries.append(beam_obj)
+
     return geometries
 
 

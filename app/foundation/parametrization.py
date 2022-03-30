@@ -29,12 +29,12 @@ from viktor.parametrization import Text
 
 class FoundationParametrization(Parametrization):
     step_1 = Step("Select CPT",
-                  views=["visualize_map", "visualize_cpt"])
+                  views=["visualize_map"])
 
     step_1.cpt = Tab("Input")
     step_1.cpt.text = Text("Select a CPT from the uploaded .GEF files.")
     step_1.cpt.cpt_selection = SiblingEntityOptionField("CPT", entity_type_names=['CPTFile'])
-    step_2 = Step("Analyze CPT", views=['visualize_dfoundations_results'])
+    step_2 = Step("Analyze CPT", views=['visualize_cpt', 'visualize_dfoundations_results'])
     step_2.friction = Tab("Friction zones")
     step_2.friction.text = Text("Set boundaries for positive and negative skin friction zones")
     step_2.friction.top_positive_friction_zone = NumberField("Top of Positive Friction Zone", suffix="m",
