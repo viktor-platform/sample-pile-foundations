@@ -1,0 +1,6 @@
+# viktor==12.10.0
+plotly
+lxml
+d-geolib==0.1.6
+markupsafe==2.0.1
+
