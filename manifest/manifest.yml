@@ -4,7 +4,7 @@ entity_types:
     has_designer: false
     show_properties: false
   Project:
-    has_designer: true
+    has_designer: false
     show_properties: false
   CPTFile:
     has_designer: true
@@ -25,5 +25,6 @@ entities:
           properties:
             name: Example Foundation
 
-
-
+# Meta data
+metadata:
+    background_image: background_image.jpg
