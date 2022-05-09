@@ -23,5 +23,4 @@ class ProjectController(ViktorController):
     label = "Project"
     children = ['CPTFile', 'Foundation']
     show_children_as = 'Table'
-    viktor_convert_entity_field = True
 

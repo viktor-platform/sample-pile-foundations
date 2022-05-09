@@ -50,7 +50,7 @@ class CPT:
     @property
     def entity_link(self) -> MapEntityLink:
         """Returns a MapEntity link to the GEF entity, which is used in the MapView of the Project entity"""
-        return MapEntityLink(self.params['name'], self.entity_id)
+        return MapEntityLink(self.params['cpt_name'], self.entity_id)
 
     @staticmethod
     def filter_nones_from_params_dict(raw_dict) -> dict:
@@ -69,7 +69,7 @@ class CPT:
         """Returns a dictionary of the lat lon coordinates to be used in geographic calculations"""
         # chekc if coordinates are present, else raise error to user
         if not hasattr(self.parsed_cpt, 'x_y_coordinates') or None in self.parsed_cpt.x_y_coordinates:
-            raise UserException(f"CPT {self.params['name']} has no coordinates: please check the GEF file")
+            raise UserException(f"CPT {self.params['cpt_name']} has no coordinates: please check the GEF file")
 
         # do conversion and return
         lat, lon = RDWGSConverter.from_rd_to_wgs(self.parsed_cpt.x_y_coordinates)
@@ -77,7 +77,7 @@ class CPT:
 
     def get_map_point(self) -> MapPoint:
         """Returns a MapPoint object"""
-        return MapPoint(self.wgs_coordinates.lat, self.wgs_coordinates.lon, title=self.params['name'],
+        return MapPoint(self.wgs_coordinates.lat, self.wgs_coordinates.lon, title=self.params['cpt_name'],
                         entity_links=[self.entity_link])
 
     def visualize(self) -> StringIO:

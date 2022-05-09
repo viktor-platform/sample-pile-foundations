@@ -59,7 +59,6 @@ class FoundationController(ViktorController):
     """Controller class which acts as interface for the Sample entity type."""
     label = "Foundation"
     parametrization = FoundationParametrization
-    viktor_convert_entity_field = True
 
     @MapView('Map', duration_guess=2)  # Visible in step 1
     def visualize_map(self, params: Munch, entity_id: int, **kwargs) -> MapResult:

@@ -94,7 +94,7 @@ def get_soil_mapping() -> dict:
     return soil_mapping
 
 
-def classify_cpt_file(cpt_file: GEFFile) -> dict:
+def classify_cpt_file(cpt_file: GEFFile, name: str) -> dict:
     """Classify an uploaded CPT File based on the selected _ClassificationMethod"""
 
     try:
@@ -129,5 +129,7 @@ def classify_cpt_file(cpt_file: GEFFile) -> dict:
     cpt_dict['ground_water_level'] = ground_water_level
     cpt_dict['x_rd'] = cpt_dict['headers']['x_y_coordinates'][0] if 'x_y_coordinates' in cpt_dict['headers'] else 0
     cpt_dict['y_rd'] = cpt_dict['headers']['x_y_coordinates'][1] if 'x_y_coordinates' in cpt_dict['headers'] else 0
+
+    cpt_dict['cpt_name'] = name
     return cpt_dict
 
