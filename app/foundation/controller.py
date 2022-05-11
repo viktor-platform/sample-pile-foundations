@@ -135,7 +135,7 @@ class FoundationController(ViktorController):
     def download_scia_input_xml(params, **kwargs) -> DownloadResult:
         """Provides ability to download SCIA input file .xml"""
         soils_and_colors = get_soil_colors(params)
-        scia_model = create_scia_model(params.step_3, soils_and_colors)
+        scia_model = create_scia_model(params, soils_and_colors)
         input_xml, _ = scia_model.generate_xml_input()
 
         return DownloadResult(input_xml, 'test.xml')
