@@ -42,13 +42,12 @@ class CPTFileController(ViktorController):
     """Controller class which acts as interface for the Sample entity type."""
     label = 'CPT File'
     parametrization = CPTFileParametrization
-    viktor_convert_entity_field = False
 
     @ParamsFromFile(file_types=['.gef'])
-    def process_file(self, file: File, **kwargs) -> dict:
+    def process_file(self, file: File, entity_name: str, **kwargs) -> dict:
         """Classify the CPT file when it is first uploaded"""
         cpt_file = GEFFile(file.getvalue("ISO-8859-1"))
-        return classify_cpt_file(cpt_file)
+        return classify_cpt_file(cpt_file, entity_name)
 
     @WebAndDataView("GEF", duration_guess=3)
     def visualize(self, params: Munch, entity_id: int, **kwargs) -> WebAndDataResult:

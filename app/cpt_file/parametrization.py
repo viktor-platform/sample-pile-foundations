@@ -40,6 +40,7 @@ class CPTFileParametrization(Parametrization):
     """Defines the input fields in left-side of the web UI in the CPT_file entity (Editor)."""
     gef = Tab('GEF')
     gef.cpt_data = Section('Properties and soil layout')
+    gef.cpt_data.name = HiddenField("name", name='cpt_name')
 
     gef.cpt_data.min_layer_thickness = NumberField('Minimum Layer Thickness', suffix='mm', min=0, step=50,
                                                    default=DEFAULT_MIN_LAYER_THICKNESS)

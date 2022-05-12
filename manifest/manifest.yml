@@ -24,7 +24,3 @@ entities:
         - entity_type: Foundation
           properties:
             name: Example Foundation
-
-# Meta data
-metadata:
-    background_image: background_image.jpg
