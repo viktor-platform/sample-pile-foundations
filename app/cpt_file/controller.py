@@ -19,7 +19,7 @@ from munch import unmunchify
 
 from viktor import File
 from viktor import ParamsFromFile
-from viktor import UserException
+from viktor import UserError
 from viktor.core import ViktorController
 from viktor.core import progress_message
 from viktor.geo import GEFFile
@@ -61,7 +61,7 @@ class CPTFileController(ViktorController):
         """Collect the necessary information from the GEF headers and return a DataGroup with the data"""
         headers = params.get('headers')
         if not headers:
-            raise UserException('GEF file has no headers')
+            raise UserError('GEF file has no headers')
         try:
             x_coordinate, y_coordinate = params.x_rd, params.y_rd
         except AttributeError:

@@ -19,7 +19,7 @@ import numpy as np
 import plotly.graph_objects as go
 from munch import Munch
 from viktor.api_v1 import API
-from viktor.core import UserException
+from viktor.core import UserError
 from viktor.core import ViktorController
 from viktor.external.scia import Model as SciaModel
 from viktor.result import DownloadResult
@@ -83,7 +83,7 @@ class FoundationController(ViktorController):
     def visualize_cpt(self, params: Munch, **kwargs) -> WebAndDataResult:
         """Provides Visualization and Data parsed from selected CPT file"""
         if params.step_1.cpt.cpt_selection is None:
-            raise UserException("No CPT selected")
+            raise UserError("No CPT selected")
         cpt_entity = params.step_1.cpt.cpt_selection
         cpt = CPT(cpt_params=cpt_entity.last_saved_params, soils=DEFAULT_ROBERTSON_TABLE, entity_id=cpt_entity.id)
         data_group = CPTFileController.get_data_group(cpt_entity.last_saved_params)

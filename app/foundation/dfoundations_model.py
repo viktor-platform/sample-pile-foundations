@@ -30,7 +30,7 @@ from geolib.models.dfoundations.dfoundations_model import DFoundationsModel
 from geolib.soils import Soil
 from geolib.soils import SoilType
 from viktor import File
-from viktor import UserException
+from viktor import UserError
 from viktor.external.dfoundations import DFoundationsAnalysis
 from viktor.external.dfoundations import OutputFileParser
 from viktor.utils import memoize
@@ -106,7 +106,7 @@ def generate_dfoundations_input(params, **kwargs) -> File:
         elif soil_name[:4] == 'Zand':
             soil.soil_type_nl = SoilType.SAND
         else:
-            raise UserException("Unidentifiable Soil Type included in CPT")
+            raise UserError("Unidentifiable Soil Type included in CPT")
 
         soil.undrained_parameters.undrained_shear_strength = 20
         soil.mohr_coulomb_parameters.friction_angle = soil_type["phi"]
@@ -143,10 +143,10 @@ def generate_dfoundations_input(params, **kwargs) -> File:
         layers=layers)
 
     if top_of_positive_skin_friction > top_level_cpt:
-        raise UserException(
+        raise UserError(
             "CPT DKM014 : Top of positive skin friction lies above surface level which is not allowed")
     elif top_of_positive_skin_friction > excavation_level:
-        raise UserException(
+        raise UserError(
             "CPT DKM014 : Top of positive skin friction lies above surface level which is not allowed")
 
     dfoundations_model.add_profile(profile)

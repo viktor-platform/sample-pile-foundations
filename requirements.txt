@@ -1,6 +1,7 @@
-# viktor==13.0.0
-plotly
-lxml
+viktor==14.0.0
+plotly==5.14.1
+lxml==4.9.2
 d-geolib==0.1.6
 markupsafe==2.0.1
+urllib3
 
