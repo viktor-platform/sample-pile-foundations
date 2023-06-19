@@ -21,19 +21,21 @@ from viktor.parametrization import Lookup
 from viktor.parametrization import NumberField
 from viktor.parametrization import Parametrization
 from viktor.parametrization import Section
-from viktor.parametrization import SiblingEntityOptionField
+from viktor.parametrization import FileField
+from viktor.parametrization import ActionButton
 from viktor.parametrization import Step
 from viktor.parametrization import Tab
 from viktor.parametrization import Text
 
 
-class FoundationParametrization(Parametrization):
+class Parametrization(Parametrization):
     step_1 = Step("Select CPT",
                   views=["visualize_map"])
 
     step_1.cpt = Tab("Input")
     step_1.cpt.text = Text("Select a CPT from the uploaded .GEF files.")
-    step_1.cpt.cpt_selection = SiblingEntityOptionField("CPT", entity_type_names=['CPTFile'])
+    step_1.cpt.cpt_file = FileField("Upload cpt file", file_types=['.GEF'])
+    step_1.action_button = ActionButton
     step_2 = Step("Analyze CPT", views=['visualize_cpt', 'visualize_dfoundations_results'])
     step_2.friction = Tab("Friction zones")
     step_2.friction.text = Text("Set boundaries for positive and negative skin friction zones")

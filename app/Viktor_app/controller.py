@@ -29,25 +29,27 @@ from viktor.views import DataGroup
 from viktor.views import DataItem
 from viktor.views import WebAndDataResult
 from viktor.views import WebAndDataView
-from .constants import DEFAULT_ROBERTSON_TABLE
-from .model import CPT
-from .parametrization import CPTFileParametrization
-from .soil_layout_conversion_functions import classify_cpt_file
-from .soil_layout_conversion_functions import convert_input_table_field_to_soil_layout
-from .soil_layout_conversion_functions import convert_soil_layout_from_mm_to_meter
-from .soil_layout_conversion_functions import convert_soil_layout_to_input_table_field
+from .cpt_file.constants import DEFAULT_ROBERTSON_TABLE
+from .cpt_file.model import CPT
+from .parametrization import Parametrization
+from .cpt_file.soil_layout_conversion_functions import classify_cpt_file
+from .cpt_file.soil_layout_conversion_functions import convert_input_table_field_to_soil_layout
+from .cpt_file.soil_layout_conversion_functions import convert_soil_layout_from_mm_to_meter
+from .cpt_file.soil_layout_conversion_functions import convert_soil_layout_to_input_table_field
 
 
-class CPTFileController(ViktorController):
+class Main_controller(ViktorController):
     """Controller class which acts as interface for the Sample entity type."""
     label = 'CPT File'
-    parametrization = CPTFileParametrization
+    parametrization = Parametrization
 
-    @ParamsFromFile(file_types=['.gef'])
-    def process_file(self, file: File, entity_name: str, **kwargs) -> dict:
+    
+    def process_file(self, params, **kwargs) -> dict:
         """Classify the CPT file when it is first uploaded"""
+        file = File(params.step_1.cpt.cpt_file)
+
         cpt_file = GEFFile(file.getvalue("ISO-8859-1"))
-        return classify_cpt_file(cpt_file, entity_name)
+        return classify_cpt_file(cpt_file, "gef")
 
     @WebAndDataView("GEF", duration_guess=3)
     def visualize(self, params: Munch, entity_id: int, **kwargs) -> WebAndDataResult:

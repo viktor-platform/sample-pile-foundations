@@ -21,11 +21,12 @@ from pathlib import Path
 from typing import Union
 
 import numpy as np
-from app.Viktor_app.scia.cpt_file.constants import DEFAULT_ROBERTSON_TABLE
+from app.Viktor_app.cpt_file.constants import DEFAULT_ROBERTSON_TABLE
 from app.Viktor_app.cpt_file.model import CPT
 from urllib3.packages.six import BytesIO
 from viktor import Color
 from viktor import File
+from viktor import UserError
 from viktor.external.scia import LineSupport
 from viktor.external.scia import LoadCase
 from viktor.external.scia import LoadCombination
@@ -52,9 +53,9 @@ def create_scia_model(params, soils_and_colors: dict) -> SciaModel:
     '''
     surface_level = soils_and_colors["surface_level"]
     # create nodes at the slab corners
-    width_x = params.geometry.slab.width_x * 1e-03
-    width_y = params.geometry.slab.width_y * 1e-03
-    thickness = params.geometry.slab.thickness * 1e-03
+    width_x = params.step_3.geometry.slab.width_x * 1e-03
+    width_y = params.step_3.geometry.slab.width_y * 1e-03
+    thickness = params.step_3.geometry.slab.thickness * 1e-03
     n1 = model.create_node('n1', 0, 0, surface_level)  # origin
     n2 = model.create_node('n2', 0, width_y, surface_level)
     n3 = model.create_node('n3', width_x, width_y, surface_level)
@@ -68,7 +69,13 @@ def create_scia_model(params, soils_and_colors: dict) -> SciaModel:
     number_of_piles_x = 4
     number_of_piles_y = 3
     pile_edge_distance = 0.3
-    pile_length = params.geometry.piles.length
+    pile_length = params.step_3.geometry.piles.length
+
+    maximum_pile_length = soils_and_colors["top_elevation"] - soils_and_colors["bottom_elevation"]
+
+    if pile_length > maximum_pile_length:
+        raise UserError("Pile depth exceeds depth of CPT, should be smaller than "
+                            + str(round(maximum_pile_length, 1)) + " m")
 
     start_x = pile_edge_distance
     end_x = width_x - pile_edge_distance
@@ -87,7 +94,7 @@ def create_scia_model(params, soils_and_colors: dict) -> SciaModel:
         pile_bottom_nodes.append(n_bottom)
 
     # create pile beams
-    pile_width = params.geometry.piles.width * 1e-03
+    pile_width = params.step_3.geometry.piles.width * 1e-03
     material = SciaMaterial(0, 'C30/37')
     cross_section = model.create_rectangular_cross_section('concrete_pile', material, pile_width, pile_width)
     pile_beams = []
@@ -149,7 +156,7 @@ def create_scia_model(params, soils_and_colors: dict) -> SciaModel:
     LOADS
     '''
     # create the load
-    force = params.loads.input.uniform_load * 1e03
+    force = params.step_3.geometry.loads.uniform_load * 1e03
     force *= -1  # in negative Z-direction
     model.create_surface_load('SF:1', lc, slab, SurfaceLoad.Direction.Z, SurfaceLoad.Type.FORCE, force,
                               SurfaceLoad.CSys.GLOBAL, SurfaceLoad.Location.LENGTH)
@@ -158,15 +165,16 @@ def create_scia_model(params, soils_and_colors: dict) -> SciaModel:
 
 def create_visualization_geometries(params, scia_model: SciaModel, soils_and_colors: dict) -> list:
     """Creates geometries to be visualized in the editor"""
+    global condition
     surface_level = soils_and_colors["surface_level"]
     geometries = []
     for node in scia_model.nodes:
-        node_obj = Sphere(Point(node.x, node.y, node.z), params.geometry.slab.width_y * 1e-05)
+        node_obj = Sphere(Point(node.x, node.y, node.z), params.step_3.geometry.slab.width_y * 1e-05)
         node_obj.material = Material('node', color=Color(0, 255, 0))
         geometries.append(node_obj)
-    thickness = params.geometry.slab.thickness * 1e-03
-    slab_width_x = params.geometry.slab.width_x / 1000
-    slab_width_y = params.geometry.slab.width_y / 1000
+    thickness = params.step_3.geometry.slab.thickness * 1e-03
+    slab_width_x = params.step_3.geometry.slab.width_x / 1000
+    slab_width_y = params.step_3.geometry.slab.width_y / 1000
 
     point_top = Point(slab_width_x / 2, slab_width_y / 2, surface_level)
     point_bottom = Point(slab_width_x / 2, slab_width_y / 2, surface_level - thickness)
@@ -174,27 +182,42 @@ def create_visualization_geometries(params, scia_model: SciaModel, soils_and_col
     slab_obj.material = Material('slab', threejs_roughness=1, threejs_opacity=0.3)
     geometries.append(slab_obj)
 
+    pile_depth = surface_level - params.step_3.geometry.piles.length
+
+    index=0
+    for top_level in soils_and_colors["top_levels"]:
+        if top_level < pile_depth:
+            break
+        index = index+1
+    pile_width = params.step_3.geometry.piles.width * 1e-03
     # soil top levels and colors
-    for i in range(1, len(soils_and_colors["colors"])):
-        top_level = soils_and_colors["top_levels"][i]
-        bottom_level = soils_and_colors["top_levels"][i + 1]
-        if bottom_level < surface_level - params.geometry.piles.length:
-            bottom_level = surface_level - params.geometry.piles.length
-        color = soils_and_colors["colors"][i]
+    for i in range(1, index-1):
+        top_level = soils_and_colors["top_levels"][i+1]
+        bottom_level = soils_and_colors["top_levels"][i]
+        color = soils_and_colors["colors"][i-1]
         r = color[0]
         g = color[1]
         b = color[2]
-
-        # pile beams
-        pile_width = params.geometry.piles.width * 1e-03
         for beam in scia_model.beams:
             point_top = Point(beam.begin_node.x, beam.begin_node.y, top_level)
             point_bottom = Point(beam.end_node.x, beam.end_node.y, bottom_level)
             beam_obj = RectangularExtrusion(pile_width, pile_width, Line(point_top, point_bottom))
-            beam_obj.material = Material('beam', threejs_roughness=1, threejs_opacity=0.75, color=Color(r, g, b))
+            beam_obj.material = Material('beam', threejs_roughness=1, threejs_opacity=1.0, color=Color(r, g, b))
             geometries.append(beam_obj)
-        if bottom_level == surface_level - params.geometry.piles.length:
-            break  # Forces loop to break when depth exceeds the bottom level of the pile.
+    top_level = soils_and_colors["top_levels"][index-1]
+    bottom_level = pile_depth
+    color = soils_and_colors["colors"][index]
+    r = color[0]
+    g = color[1]
+    b = color[2]
+
+    for beam in scia_model.beams:
+        point_top = Point(beam.begin_node.x, beam.begin_node.y, top_level)
+        point_bottom = Point(beam.end_node.x, beam.end_node.y, bottom_level)
+        beam_obj = RectangularExtrusion(pile_width, pile_width, Line(point_top, point_bottom))
+        beam_obj.material = Material('beam', threejs_roughness=1, threejs_opacity=1.0, color=Color(r, g, b))
+        geometries.append(beam_obj)
+
     return geometries
 
 
@@ -210,7 +233,7 @@ def get_scia_input_esa() -> BytesIO:
 def generate_scia_input(params, **kwargs):
     """Generates input files for scia analysis"""
     soils_and_colors = get_soil_colors(params)
-    scia_model = create_scia_model(params.step_2, soils_and_colors)
+    scia_model = create_scia_model(params, soils_and_colors)
 
     # create input files
     input_xml, input_def = scia_model.generate_xml_input()
@@ -255,16 +278,15 @@ def scia_parser(scia_model: SciaModel, scia_result: BytesIO, params):
     reactions = result['Nodal reactions']
 
     max_rz = float(max(reactions['R_z']))
-    geometries = create_visualization_geometries(params.step_2, scia_model, soils_and_colors)
+    geometries = create_visualization_geometries(params, scia_model, soils_and_colors)
     return geometries, max_rz
 
 
 def get_soil_colors(params, **kwargs) -> dict:
     """Obtains the soil level data accompanied with the corresponding color from the default Robertson table"""
-    cpt_entity = params.step_1.cpt.cpt_settings.cpt_selection
+    cpt_entity = params.step_1.cpt.cpt_selection
     cpt_instance = CPT(cpt_params=cpt_entity.last_saved_params, soils=DEFAULT_ROBERTSON_TABLE,
                        entity_id=cpt_entity.id)
-    print(cpt_instance)
     soils = []
     colors = []
     top_levels = [0]
@@ -276,8 +298,10 @@ def get_soil_colors(params, **kwargs) -> dict:
                 color = soil_type["color"]
                 colors.append(color)
     soils_and_colors = {
-                           "colors": colors, 
-                           "top_levels": top_levels,
-                           "surface_level": cpt_instance.params['soil_layout'][0]["top_of_layer"]
-                       }
+        "colors": colors,
+        "top_levels": top_levels,
+        "surface_level": cpt_instance.params['soil_layout'][0]["top_of_layer"],
+        "top_elevation": cpt_instance.parsed_cpt.elevation[0] / 1000,
+        "bottom_elevation": cpt_instance.parsed_cpt.elevation[-1] / 1000
+    }
     return soils_and_colors

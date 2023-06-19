@@ -21,8 +21,8 @@ from pathlib import Path
 from typing import Union
 
 import numpy as np
-from app.cpt_file.constants import DEFAULT_ROBERTSON_TABLE
-from app.cpt_file.model import CPT
+from app.Viktor_app.scia.cpt_file.constants import DEFAULT_ROBERTSON_TABLE
+from app.Viktor_app.cpt_file.model import CPT
 from urllib3.packages.six import BytesIO
 from viktor import Color
 from viktor import File

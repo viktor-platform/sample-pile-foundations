@@ -19,8 +19,8 @@ from pathlib import Path
 
 import geolib.models.dfoundations.piles
 import geolib.models.dfoundations.profiles
-from app.cpt_file.constants import DEFAULT_ROBERTSON_TABLE
-from app.cpt_file.model import CPT
+from app.Viktor_app.scia.cpt_file.constants import DEFAULT_ROBERTSON_TABLE
+from app.Viktor_app.cpt_file.model import CPT
 from geolib.geometry import Point
 from geolib.models.dfoundations import profiles
 from geolib.models.dfoundations.dfoundations_model import BearingPilesModel
