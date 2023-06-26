@@ -15,7 +15,7 @@ CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFT
 SOFTWARE.
 """
 
-from viktor.parametrization import DownloadButton
+from viktor.parametrization import DownloadButton, ChildEntityManager
 from viktor.parametrization import IsNotNone
 from viktor.parametrization import Lookup
 from viktor.parametrization import NumberField
@@ -33,6 +33,7 @@ class FoundationParametrization(Parametrization):
 
     step_1.cpt = Tab("Input")
     step_1.cpt.text = Text("Select a CPT from the uploaded .GEF files.")
+    step_1.cpt.cpt_selection = ChildEntityManager("CPTFile")
     step_1.cpt.cpt_selection = SiblingEntityOptionField("CPT", entity_type_names=['CPTFile'])
     step_2 = Step("Analyze CPT", views=['visualize_cpt', 'visualize_dfoundations_results'])
     step_2.friction = Tab("Friction zones")

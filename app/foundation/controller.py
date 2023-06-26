@@ -56,11 +56,10 @@ from ..cpt_file.model import CPT
 
 
 class FoundationController(ViktorController):
-    
-    viktor_enforce_field_constraints = True
-    
     """Controller class which acts as interface for the Sample entity type."""
     label = "Foundation"
+    children = ['CPTFile']
+    show_children_as = 'Table'
     parametrization = FoundationParametrization
 
     @MapView('Map', duration_guess=2)  # Visible in step 1

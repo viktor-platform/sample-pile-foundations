@@ -17,16 +17,16 @@ SOFTWARE.
 
 from .cpt_file.controller import CPTFileController as CPTFile
 from .foundation.controller import FoundationController as Foundation
-from .project.controller import ProjectController as Project
-from .project_folder.controller import ProjectFolderController as ProjectFolder
+from .project.controller import ProjectController as Projects
 
 from viktor import InitialEntity
 
-initial_entities = [
-    InitialEntity('ProjectFolder', name='Projects', children=[
-        InitialEntity('Project', name='Test Project', params='../manifest/fixtures/project_1.json', children=[
-            InitialEntity('Foundation', name='Example Foundation')
-        ])
-    ])
+initial_entities = [InitialEntity("Projects", name="Projects", children=[
+    InitialEntity('Foundation', name='Example Foundation', children=[
+        InitialEntity("CPTFile", name='Example CPT')
+    ]
+                  )
 ]
+                                  )
+                    ]
 
