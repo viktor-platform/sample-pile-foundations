@@ -22,9 +22,7 @@ from .project.controller import ProjectController as Projects
 from viktor import InitialEntity
 
 initial_entities = [InitialEntity("Projects", name="Projects", children=[
-    InitialEntity('Foundation', name='Example Foundation', children=[
-        InitialEntity("CPTFile", name='Example CPT')
-    ]
+    InitialEntity('Foundation', name='Example Foundation'
                   )
 ]
                                   )

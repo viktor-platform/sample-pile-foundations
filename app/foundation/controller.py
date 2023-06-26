@@ -75,7 +75,7 @@ class FoundationController(ViktorController):
     @staticmethod
     def get_cpt_models(entity_id: int) -> list:
         """Obtains all child 'CPT File' entities"""
-        cpt_file_entities = API().get_entity(entity_id).siblings(entity_type_names=['CPTFile'], include_params=True)
+        cpt_file_entities = API().get_entity(entity_id).children(entity_type_names=['CPTFile'], include_params=True)
         all_cpt_files = [CPT(cpt_params=cpt_entity.last_saved_params, entity_id=cpt_entity.id)
                          for cpt_entity in cpt_file_entities]
 
