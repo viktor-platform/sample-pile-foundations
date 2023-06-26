@@ -23,10 +23,10 @@ from typing import Union
 import numpy as np
 from app.cpt_file.constants import DEFAULT_ROBERTSON_TABLE
 from app.cpt_file.model import CPT
-from urllib3.packages.six import BytesIO
+from io import BytesIO
 from viktor import Color
 from viktor import File
-from viktor import UserException
+from viktor import UserError
 from viktor.external.scia import LineSupport
 from viktor.external.scia import LoadCase
 from viktor.external.scia import LoadCombination
@@ -74,7 +74,7 @@ def create_scia_model(params, soils_and_colors: dict) -> SciaModel:
     maximum_pile_length = soils_and_colors["top_elevation"] - soils_and_colors["bottom_elevation"]
 
     if pile_length > maximum_pile_length:
-        raise UserException("Pile depth exceeds depth of CPT, should be smaller than "
+        raise UserError("Pile depth exceeds depth of CPT, should be smaller than "
                             + str(round(maximum_pile_length, 1)) + " m")
 
     start_x = pile_edge_distance

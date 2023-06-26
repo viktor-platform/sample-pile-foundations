@@ -19,7 +19,7 @@ from munch import unmunchify
 
 from viktor import File
 from viktor import ParamsFromFile
-from viktor import UserException
+from viktor import UserError
 from viktor.core import ViktorController
 from viktor.core import progress_message
 from viktor.geo import GEFFile
@@ -39,6 +39,9 @@ from .soil_layout_conversion_functions import convert_soil_layout_to_input_table
 
 
 class CPTFileController(ViktorController):
+    
+    viktor_enforce_field_constraints = True
+    
     """Controller class which acts as interface for the Sample entity type."""
     label = 'CPT File'
     parametrization = CPTFileParametrization
@@ -61,7 +64,7 @@ class CPTFileController(ViktorController):
         """Collect the necessary information from the GEF headers and return a DataGroup with the data"""
         headers = params.get('headers')
         if not headers:
-            raise UserException('GEF file has no headers')
+            raise UserError('GEF file has no headers')
         try:
             x_coordinate, y_coordinate = params.x_rd, params.y_rd
         except AttributeError:

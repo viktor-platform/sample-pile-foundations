@@ -19,7 +19,7 @@ import numpy as np
 import plotly.graph_objects as go
 from munch import Munch
 from viktor.api_v1 import API
-from viktor.core import UserException
+from viktor.core import UserError
 from viktor.core import ViktorController
 from viktor.external.scia import Model as SciaModel
 from viktor.result import DownloadResult
@@ -50,12 +50,15 @@ from .scia_model import get_soil_colors
 from .scia_model import run_scia
 from .scia_model import scia_parser
 from .scia_model import serialize_file_to_string
-from .. import CPTFileController
+from ..cpt_file.controller import CPTFileController
 from ..cpt_file.constants import DEFAULT_ROBERTSON_TABLE
 from ..cpt_file.model import CPT
 
 
 class FoundationController(ViktorController):
+    
+    viktor_enforce_field_constraints = True
+    
     """Controller class which acts as interface for the Sample entity type."""
     label = "Foundation"
     parametrization = FoundationParametrization
@@ -83,7 +86,7 @@ class FoundationController(ViktorController):
     def visualize_cpt(self, params: Munch, **kwargs) -> WebAndDataResult:
         """Provides Visualization and Data parsed from selected CPT file"""
         if params.step_1.cpt.cpt_selection is None:
-            raise UserException("No CPT selected")
+            raise UserError("No CPT selected")
         cpt_entity = params.step_1.cpt.cpt_selection
         cpt = CPT(cpt_params=cpt_entity.last_saved_params, soils=DEFAULT_ROBERTSON_TABLE, entity_id=cpt_entity.id)
         data_group = CPTFileController.get_data_group(cpt_entity.last_saved_params)

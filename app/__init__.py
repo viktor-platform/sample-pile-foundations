@@ -15,8 +15,18 @@ CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFT
 SOFTWARE.
 """
 
-from .cpt_file.controller import CPTFileController
-from .foundation.controller import FoundationController
-from .project.controller import ProjectController
-from .project_folder.controller import ProjectFolderController
+from .cpt_file.controller import CPTFileController as CPTFile
+from .foundation.controller import FoundationController as Foundation
+from .project.controller import ProjectController as Project
+from .project_folder.controller import ProjectFolderController as ProjectFolder
+
+from viktor import InitialEntity
+
+initial_entities = [
+    InitialEntity('ProjectFolder', name='Projects', children=[
+        InitialEntity('Project', name='Test Project', params='../manifest/fixtures/project_1.json', children=[
+            InitialEntity('Foundation', name='Example Foundation')
+        ])
+    ])
+]
 

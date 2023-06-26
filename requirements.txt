@@ -1,4 +1,4 @@
-# viktor==13.0.0
+viktor==14.2.1
 plotly
 lxml
 d-geolib==0.1.6

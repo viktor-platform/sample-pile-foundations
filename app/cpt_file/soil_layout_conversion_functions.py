@@ -19,7 +19,7 @@ from math import ceil
 from typing import List
 
 from viktor import Color
-from viktor import UserException
+from viktor import UserError
 from viktor.geo import GEFClassificationError
 from viktor.geo import GEFFile
 from viktor.geo import GEFParsingException
@@ -63,7 +63,7 @@ def convert_input_table_field_to_soil_layout(bottom_of_soil_layout_user: float,
         try:
             soil_layers.append(SoilLayer(soils[soil_name], top_of_layer, bottom))
         except KeyError as soil_name_no_exist:
-            raise UserException(f"{soil_name} is not available in the selected classification " f"table.\n "
+            raise UserError(f"{soil_name} is not available in the selected classification " f"table.\n "
                                 f"Please select a different table, or reclassify the CPT files") from soil_name_no_exist
         bottom = top_of_layer  # Set bottom of next soil layer to top of current layer.
 
@@ -112,9 +112,9 @@ def classify_cpt_file(cpt_file: GEFFile, name: str) -> dict:
                                                    return_soil_layout_obj=True)
 
     except GEFParsingException as parsing_exception:
-        raise UserException(f"CPT Parsing: {str(parsing_exception)}") from parsing_exception
+        raise UserError(f"CPT Parsing: {str(parsing_exception)}") from parsing_exception
     except GEFClassificationError as classification_exception:
-        raise UserException(f"CPT Classification: {str(classification_exception)}") from classification_exception
+        raise UserError(f"CPT Classification: {str(classification_exception)}") from classification_exception
 
     # filter thickness and convert to meter
     soil_layout_filtered = soil_layout_obj.filter_layers_on_thickness(

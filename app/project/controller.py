@@ -19,6 +19,9 @@ from viktor.core import ViktorController
 
 
 class ProjectController(ViktorController):
+    
+    viktor_enforce_field_constraints = True
+    
     """Controller class which acts as interface for the Sample entity type."""
     label = "Project"
     children = ['CPTFile', 'Foundation']

@@ -22,7 +22,7 @@ from munch import munchify
 from munch import unmunchify
 from plotly import graph_objects as go
 from plotly.subplots import make_subplots
-from viktor import UserException
+from viktor import UserError
 from viktor.geo import GEFData
 from viktor.geo import SoilLayout
 from viktor.geometry import RDWGSConverter
@@ -69,7 +69,7 @@ class CPT:
         """Returns a dictionary of the lat lon coordinates to be used in geographic calculations"""
         # chekc if coordinates are present, else raise error to user
         if not hasattr(self.parsed_cpt, 'x_y_coordinates') or None in self.parsed_cpt.x_y_coordinates:
-            raise UserException(f"CPT {self.params['cpt_name']} has no coordinates: please check the GEF file")
+            raise UserError(f"CPT {self.params['cpt_name']} has no coordinates: please check the GEF file")
 
         # do conversion and return
         lat, lon = RDWGSConverter.from_rd_to_wgs(self.parsed_cpt.x_y_coordinates)
