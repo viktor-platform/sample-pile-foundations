@@ -1,12 +1,13 @@
 ![](https://img.shields.io/badge/SDK-v14.2.1-blue) <Please check version is the same as specified in requirements.txt>
 
 # Pile Foundations
-This sample app demonstrates the ability to analyze the performance of a pile foundation when implemented at a particular CPT. <basic one line intro here>
+This sample app demonstrates the ability to analyze the performance of a pile foundation when implemented at a particular 
+CPT. <basic one line intro here>
 
 The process of analysing pile foundations consists of 5 steps.  
 
 
-1. Select CPT: The available CPTs are visible in the MapView.  
+1. Select CPT: The available CPTs are visible in the MapView. Make sure a CPT is uploaded in order to select (example files are available [in this repository](manifest/fixtures/gef_file_1.GEF)).  
 ![](resources/step1.PNG)
 
 2. Analyse CPT: The soil layout can be visualized in the GEF-tab. Next, the CPT can be analysed in the D-Foundations-tab, where the bearing capacity is obtained with respect to the depth of the CPT. 
@@ -25,13 +26,12 @@ The process of analysing pile foundations consists of 5 steps.
 ![](resources/step5.PNG)
 
   
-To run this code, you will need a VIKTOR licence, which you can access using our [free version](https://www.viktor.ai/try-for-free). You will need your own D-Foundations and SCIA licences for the integration. 
+To run this code, you will need a VIKTOR licence, which you can access using our [free version](https://www.viktor.ai/try-for-free). You will need your own [D-Foundations](https://docs.viktor.ai/sdk/api/external/dfoundations) and [SCIA](https://docs.viktor.ai/sdk/api/external/scia) licences for the integration. 
 
 ## App structure <please provide if more than a single entity type is present>
 
 ```
-project_folder: has projects as its children
-  └─ project: has cpt files and foundations as its children
+projects: contains the different foundation designs
+  └─ foundation: can show cpt_files on a map, can determine bearing capacity of the soil and determine reaction force of the foundation piles
      └── cpt_file: intrepretation of a CPT file using the Robertson method  
-     └── foundation: can show cpt_files on a map, can determine bearing capacity of the soil and determine reaction force of the foundation piles
 ```

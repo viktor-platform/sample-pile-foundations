@@ -39,9 +39,6 @@ from .soil_layout_conversion_functions import convert_soil_layout_to_input_table
 
 
 class CPTFileController(ViktorController):
-    
-    viktor_enforce_field_constraints = True
-    
     """Controller class which acts as interface for the Sample entity type."""
     label = 'CPT File'
     parametrization = CPTFileParametrization

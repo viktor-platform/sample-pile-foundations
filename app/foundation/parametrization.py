@@ -15,7 +15,7 @@ CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFT
 SOFTWARE.
 """
 
-from viktor.parametrization import DownloadButton
+from viktor.parametrization import DownloadButton, ChildEntityManager, ChildEntityOptionField
 from viktor.parametrization import IsNotNone
 from viktor.parametrization import Lookup
 from viktor.parametrization import NumberField
@@ -32,8 +32,10 @@ class FoundationParametrization(Parametrization):
                   views=["visualize_map"])
 
     step_1.cpt = Tab("Input")
-    step_1.cpt.text = Text("Select a CPT from the uploaded .GEF files.")
-    step_1.cpt.cpt_selection = SiblingEntityOptionField("CPT", entity_type_names=['CPTFile'])
+    step_1.cpt.text_1 = Text("# Manage, create and/or delete your cpt files here")
+    step_1.cpt.cpt_manager = ChildEntityManager("CPTFile", visible=True)
+    step_1.cpt.text_2 = Text("## Select a CPT from the uploaded .GEF files here")
+    step_1.cpt.cpt_selection = ChildEntityOptionField("CPT", entity_type_names=['CPTFile'])
     step_2 = Step("Analyze CPT", views=['visualize_cpt', 'visualize_dfoundations_results'])
     step_2.friction = Tab("Friction zones")
     step_2.friction.text = Text("Set boundaries for positive and negative skin friction zones")
